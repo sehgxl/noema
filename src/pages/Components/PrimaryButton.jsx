@@ -1,12 +1,12 @@
-const PrimaryBtn = ({ btnText, handleClick, handleProps }) => {
+const PrimaryBtn = (props) => {
   return (
     <button
       onClick={() => {
-        handleClick(handleProps);
+        props.handleClick(props);
       }}
       className="w-full rounded-md bg-purple-500 text-lg text-slate-800"
     >
-      {btnText}
+      {props.btnText}
     </button>
   );
 };
