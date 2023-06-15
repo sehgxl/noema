@@ -11,5 +11,6 @@
   "action": {
     "default_popup": "src/static/popup.html"
   },
+  "host_permissions": ["https://read-mojo-api.onrender.com/*"],
   "permissions": ["activeTab", "identity", "storage"]
 }
