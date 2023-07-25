@@ -6,4 +6,4 @@ Extension for increasing your reading mojo.
 
 - A chrome extension which can summarise any article on the web for you.
 - Front-End : React, Parcel and Tailwind
-- Back-End : Express and Langchain
+- Back-End : Express and Langchain | Here is the [backend-code](https://github.com/sehgxl/readmojo-api)
