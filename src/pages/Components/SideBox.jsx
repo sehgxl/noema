@@ -34,6 +34,21 @@ function emulateFind(word, findSelection, setFindSelection) {
   }
 }
 
+function flagSelectedWord(parentNode, word) {
+  const searchElements = parentNode;
+  const special = /[\\[{().+*?|^$]/g;
+
+  if (word !== "") {
+    if (special.test(word)) word = word.replace(special, "\\$&");
+    let regexp = new RegExp(word, "gi");
+
+    searchElements.innerHTML = searchElements.innerText.replace(
+      regexp,
+      "<span  id='noema-clickable-element' >$&</span>"
+    );
+  }
+}
+
 function copyPasteWord(word) {
   window.navigator.clipboard.writeText(word);
 }
@@ -66,16 +81,32 @@ function SideBox() {
 
   useEffect(() => {
     function handleMouseUp(e) {
-      const selectedText = window.getSelection().toString().trim();
-      const words = selectedText.split(" ");
+      const selectedNode = window.getSelection();
+      const selectedText = selectedNode.toString().trim();
+      const selectedWordParentNode = selectedNode.anchorNode.parentElement;
+
+      flagSelectedWord(selectedWordParentNode, selectedText);
+
       filterSelection();
       if (selectedText && !notAllowedWords.includes(selectedText)) {
         setSelectedWord(selectedText);
-        setCopyAreaPosition((prev) => ({
-          ...prev,
-          x: e.pageX,
-          y: e.pageY,
-        }));
+        const clickableElements = document.querySelectorAll(
+          "#noema-clickable-element"
+        );
+        console.log(clickableElements);
+        clickableElements.forEach((element) => {
+          element.addEventListener("click", () => {
+            setCopyAreaPosition((prev) => {
+              return {
+                ...prev,
+                x: element.offsetLeft,
+                y: element.offsetTop,
+              };
+            });
+            setMenuOpen(true);
+            filterSelection();
+          });
+        });
       }
     }
     document.addEventListener("mouseup", handleMouseUp);
@@ -129,10 +160,8 @@ function SideBox() {
             display: "flex",
             backgroundColor: "#FAFAFA",
             position: "absolute",
-            left: `calc(${copyAreaPosition.x}px - ${
-              selectedWord.length / 2
-            }ch)`,
-            top: `calc(${copyAreaPosition.y}px - 3.2rem)`,
+            left: copyAreaPosition.x - 50,
+            top: copyAreaPosition.y - 50,
           }}
           className="scale-in-bottom w-max select-none overflow-hidden rounded-lg font-sans text-black shadow-md shadow-gray-400 transition-all"
           ref={copyAreaRef}
@@ -233,7 +262,7 @@ function SideBox() {
         </div>
       ) : null}
 
-      <div
+      {/* <div
         onClick={() => {
           setMenuOpen(true);
           filterSelection();
@@ -246,7 +275,7 @@ function SideBox() {
           left: `calc(${copyAreaPosition.x}px - ${selectedWord.length / 2}ch)`,
           top: `calc(${copyAreaPosition.y}px - 1rem)`,
         }}
-      ></div>
+      ></div> */}
 
       <CustomDrawer
         setDrawerOpen={setDrawerOpen}
