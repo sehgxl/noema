@@ -65,7 +65,7 @@ function SideBox() {
   const [findSelection, setFindSelection] = useState(true);
 
   useEffect(() => {
-    function handleMouseUp(e) {
+    const handleMouseUp = (e) => {
       const selectedText = window.getSelection().toString().trim();
       const words = selectedText.split(" ");
       filterSelection();
@@ -77,7 +77,7 @@ function SideBox() {
           y: e.pageY,
         }));
       }
-    }
+    };
     document.addEventListener("mouseup", handleMouseUp);
 
     return () => {
@@ -123,115 +123,125 @@ function SideBox() {
 
   return (
     <>
-      {menuOpen ? (
-        <div
-          style={{
-            display: "flex",
-            backgroundColor: "#FAFAFA",
-            position: "absolute",
-            left: `calc(${copyAreaPosition.x}px - ${
-              selectedWord.length / 2
-            }ch)`,
-            top: `calc(${copyAreaPosition.y}px - 3.2rem)`,
-          }}
-          className="scale-in-bottom w-max select-none overflow-hidden rounded-lg font-sans text-black shadow-md shadow-gray-400 transition-all"
-          ref={copyAreaRef}
-        >
-          {prevShow ? (
-            <span
-              className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 p-4 duration-150 ease-in-out hover:bg-gray-200"
-              onClick={() => {
-                menu1.current.classList.remove("slide-out-left");
-                menu2.current.classList.add("slide-out-right");
-                setTimeout(() => {
-                  menu2.current.classList.add("hide");
-                  menu1.current.classList.remove("hide");
-                  menu1.current.classList.add("slide-in-right");
-                  setPrevShow(false);
-                }, 100);
+      <div id="slider" class="swipe">
+        <div class="swipe-wrap">
+          {menuOpen ? (
+            <div
+              style={{
+                display: "flex",
+                backgroundColor: "#FAFAFA",
+                position: "absolute",
+                left: `calc(${copyAreaPosition.x}px - ${
+                  selectedWord.length / 2
+                }ch)`,
+                top: `calc(${copyAreaPosition.y}px - 3.2rem)`,
               }}
+              className="scale-in-bottom w-max select-none overflow-hidden rounded-lg font-sans text-black shadow-md shadow-gray-400 transition-all"
+              ref={copyAreaRef}
             >
-              <div className="color-[#374151] flex h-2 w-2 items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-                  <path
-                    fill="#374151"
-                    d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"
-                  />
-                </svg>
+              {prevShow ? (
+                <span
+                  className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 p-4 duration-150 ease-in-out hover:bg-gray-200"
+                  onClick={() => {
+                    menu1.current.classList.remove("slide-out-left");
+                    menu2.current.classList.add("slide-out-right");
+                    setTimeout(() => {
+                      menu2.current.classList.add("hide");
+                      menu1.current.classList.remove("hide");
+                      menu1.current.classList.add("slide-in-right");
+                      setPrevShow(false);
+                    }, 100);
+                  }}
+                >
+                  <div className="color-[#374151] flex h-2 w-2 items-center justify-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 320 512"
+                    >
+                      <path
+                        fill="#374151"
+                        d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"
+                      />
+                    </svg>
+                  </div>
+                </span>
+              ) : null}
+
+              <div className="flex" ref={menu1}>
+                <span
+                  className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 px-4 py-2 duration-150 ease-in-out hover:bg-gray-200"
+                  onClick={() => {
+                    copyPasteWord(selectedWord);
+                    copyAreaRef.current.classList.add("scale-out-bottom");
+                  }}
+                >
+                  Copy
+                </span>
+
+                <span
+                  ref={findSelectionButton}
+                  className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 px-4 py-2 duration-150 ease-in-out hover:bg-gray-200"
+                  onClick={() => {
+                    emulateFind(selectedWord, findSelection, setFindSelection);
+                  }}
+                >
+                  {findSelection ? "Find Selection" : "Clear Selection"}
+                </span>
+
+                <span
+                  className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 px-4 py-2 duration-150 ease-in-out hover:bg-gray-200"
+                  onClick={() => {
+                    setDrawerOpen(true);
+
+                    copyAreaRef.current.classList.add("scale-out-bottom");
+                  }}
+                >
+                  Look Up
+                </span>
               </div>
-            </span>
-          ) : null}
 
-          <div className="flex" ref={menu1}>
-            <span
-              className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 px-4 py-2 duration-150 ease-in-out hover:bg-gray-200"
-              onClick={() => {
-                copyPasteWord(selectedWord);
-                copyAreaRef.current.classList.add("scale-out-bottom");
-              }}
-            >
-              Copy
-            </span>
+              <div className="hide flex" ref={menu2}>
+                <span className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 px-4 py-2 duration-150 ease-in-out hover:bg-gray-200">
+                  Translate
+                </span>
 
-            <span
-              ref={findSelectionButton}
-              className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 px-4 py-2 duration-150 ease-in-out hover:bg-gray-200"
-              onClick={() => {
-                emulateFind(selectedWord, findSelection, setFindSelection);
-              }}
-            >
-              {findSelection ? "Find Selection" : "Clear Selection"}
-            </span>
-
-            <span
-              className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 px-4 py-2 duration-150 ease-in-out hover:bg-gray-200"
-              onClick={() => {
-                setDrawerOpen(true);
-
-                copyAreaRef.current.classList.add("scale-out-bottom");
-              }}
-            >
-              Look Up
-            </span>
-          </div>
-
-          <div className="hide flex" ref={menu2}>
-            <span className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 px-4 py-2 duration-150 ease-in-out hover:bg-gray-200">
-              Translate
-            </span>
-
-            <span
-              onClick={() => {
-                handleSearchWeb(selectedWord);
-              }}
-              className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 px-4 py-2 duration-150 ease-in-out hover:bg-gray-200"
-            >
-              Search Web
-            </span>
-          </div>
-          {!prevShow ? (
-            <span
-              className="cursor-pointer select-none p-4 duration-150 ease-in-out hover:bg-gray-200"
-              onClick={() => {
-                menu2.current.classList.remove("slide-out-right");
-                menu1.current.classList.add("slide-out-left");
-                setTimeout(() => {
-                  menu1.current.classList.add("hide");
-                  menu2.current.classList.remove("hide");
-                  menu2.current.classList.add("slide-in-right");
-                  setPrevShow(true);
-                }, 100);
-              }}
-            >
-              <div className="color-[#374151] flex h-2 w-2 items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-                  <path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" />
-                </svg>
+                <span
+                  onClick={() => {
+                    handleSearchWeb(selectedWord);
+                  }}
+                  className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 px-4 py-2 duration-150 ease-in-out hover:bg-gray-200"
+                >
+                  Search Web
+                </span>
               </div>
-            </span>
+              {!prevShow ? (
+                <span
+                  className="cursor-pointer select-none p-4 duration-150 ease-in-out hover:bg-gray-200"
+                  onClick={() => {
+                    menu2.current.classList.remove("slide-out-right");
+                    menu1.current.classList.add("slide-out-left");
+                    setTimeout(() => {
+                      menu1.current.classList.add("hide");
+                      menu2.current.classList.remove("hide");
+                      menu2.current.classList.add("slide-in-right");
+                      setPrevShow(true);
+                    }, 100);
+                  }}
+                >
+                  <div className="color-[#374151] flex h-2 w-2 items-center justify-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 320 512"
+                    >
+                      <path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" />
+                    </svg>
+                  </div>
+                </span>
+              ) : null}
+            </div>
           ) : null}
         </div>
-      ) : null}
+      </div>
 
       <div
         onClick={() => {
