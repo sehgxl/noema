@@ -1,101 +1,271 @@
-import PrimaryBtn from "./PrimaryButton";
-import { useState } from "react";
-import { AiOutlineCloseSquare as CloseIcon } from "react-icons/ai";
-import { BsDashSquare as MinimiseIcon } from "react-icons/bs";
-import { MdContentCopy as CopyIcon } from "react-icons/md";
-import { BsArrowUpRightSquare as EnlargeIcon } from "react-icons/bs";
+import { useState, useEffect, useRef } from "react";
+import CustomDrawer from "./CustomDrawer.jsx";
+import "./sidebox.css";
 
-import getSummary from "./getSummary";
-const SideBox = ({ setShowSideBox }) => {
-  const [Summary, setSummary] = useState("");
-  const [showSmry, setShowSmry] = useState(false);
-  const [Loading, setLoading] = useState(false);
+const notAllowedWords = ["Copied!"];
+
+function handleSearchWeb(word) {
+  window.open(`https://www.google.com/search?q=${word}`, "_blank");
+}
+
+function emulateFind(word, findSelection, setFindSelection) {
+  const searchElements = document.body.querySelectorAll(
+    "p, h1, h2, h3, h4, h5, h6"
+  );
+  const special = /[\\[{().+*?|^$]/g;
+
+  if (findSelection && word !== "") {
+    if (special.test(word)) word = word.replace(special, "\\$&");
+    let regexp = new RegExp(word, "gi");
+
+    searchElements.forEach((element) => {
+      element.innerHTML = element.innerText.replace(regexp, "<mark>$&</mark>");
+    });
+    setFindSelection(false);
+  } else {
+    if (special.test(word)) word = word.replace(special, "\\$&");
+    let regexp = new RegExp(`<mark>${word}</mark>`, "gi");
+
+    searchElements.forEach((element) => {
+      element.innerHTML = element.innerText.replace(regexp, word);
+    });
+
+    setFindSelection(true);
+  }
+}
+
+function copyPasteWord(word) {
+  window.navigator.clipboard.writeText(word);
+}
+
+function filterSelection() {
+  const selectedNode = window.getSelection();
+  const selectedText = selectedNode.toString().trim();
+
+  if (selectedText.includes(notAllowedWords)) {
+    selectedNode.removeAllRanges();
+  }
+}
+
+function SideBox() {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedWord, setSelectedWord] = useState("");
+  const [copyAreaPosition, setCopyAreaPosition] = useState({
+    x: 0,
+    y: 0,
+  });
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [meaning, setMeaning] = useState(null);
+  const copyAreaRef = useRef(null);
+  const menu1 = useRef(null);
+  const menu2 = useRef(null);
+  const [prevShow, setPrevShow] = useState(false);
+
+  const findSelectionButton = useRef(null);
+  const [findSelection, setFindSelection] = useState(true);
+
+  useEffect(() => {
+    const handleMouseUp = (e) => {
+      const selectedText = window.getSelection().toString().trim();
+      const words = selectedText.split(" ");
+      filterSelection();
+      if (selectedText && !notAllowedWords.includes(selectedText)) {
+        setSelectedWord(selectedText);
+        setCopyAreaPosition((prev) => ({
+          ...prev,
+          x: e.pageX,
+          y: e.pageY,
+        }));
+      }
+    };
+    document.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (copyAreaRef.current && !copyAreaRef.current.contains(event.target)) {
+        copyAreaRef.current.classList.add("scale-out-bottom");
+        //this setTimeout runs after the animation ends
+        setTimeout(() => {
+          setMenuOpen(false);
+          setPrevShow(false);
+        }, 110);
+        if (findSelection) {
+          emulateFind(selectedWord, findSelection, setFindSelection);
+        }
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      copyAreaRef.current.classList.remove("scale-out-bottom");
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [copyAreaRef]);
+
+  useEffect(() => {
+    if (
+      selectedWord &&
+      selectedWord.split(" ").length <= 2 &&
+      !notAllowedWords.includes(selectedWord)
+    ) {
+      fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${selectedWord}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setMeaning(data[0]);
+        });
+    }
+  }, [selectedWord]);
 
   return (
-    <section className="fixed bottom-2 right-2 z-10 flex w-72 flex-col items-center justify-start bg-slate-800 px-2 pb-4 pt-9 text-green-600">
-      <div className="absolute right-2  top-2 flex flex-row gap-2 ">
-        {showSmry ? (
-          <MinimiseIcon
-            onClick={() => {
-              setShowSmry(false);
-            }}
-            className="scale-[1.3] cursor-pointer"
-          />
-        ) : Summary !== "" ? (
-          <EnlargeIcon
-            onClick={() => {
-              setShowSmry(true);
-            }}
-            className="scale-[1.3] cursor-pointer"
-          />
-        ) : null}
-        <CloseIcon
-          onClick={() => {
-            setShowSideBox(false);
-          }}
-          className="scale-[1.3] cursor-pointer"
-        />
-      </div>
-      {showSmry ? (
-        <PrimaryBtn
-          btnText={"Get Summary Again"}
-          handleClick={getSummary}
-          setSummary={setSummary}
-          setLoading={setLoading}
-          setShowSmry={setShowSmry}
-        />
-      ) : (
-        <PrimaryBtn
-          btnText={"Get Summary"}
-          handleClick={getSummary}
-          setSummary={setSummary}
-          setLoading={setLoading}
-          setShowSmry={setShowSmry}
-        />
-      )}
-      <div className="mt-4">
-        {Loading ? (
-          <div className="flex flex-col items-center justify-start">
-            <p>Loading...</p>
-          </div>
-        ) : null}
-        {showSmry ? (
-          <div className="flex h-96 flex-col items-center justify-start gap-4">
-            <p className="h-full overflow-scroll px-2 text-justify text-base">
-              {Summary}
-            </p>
-            <CopyIcon
-              onClick={() => {
-                const unsecuredCopyToClipboard = (text) => {
-                  const textArea = document.createElement("textarea");
-                  textArea.value = text;
-                  document.body.appendChild(textArea);
-                  textArea.focus();
-                  textArea.select();
-                  try {
-                    document.execCommand("copy");
-                  } catch (err) {
-                    console.error("Unable to copy to clipboard", err);
-                  }
-                  document.body.removeChild(textArea);
-                };
-
-                const copyToClipboard = (content) => {
-                  if (window.isSecureContext && navigator.clipboard) {
-                    navigator.clipboard.writeText(content);
-                  } else {
-                    unsecuredCopyToClipboard(content);
-                  }
-                };
-                copyToClipboard(Summary);
+    <>
+      <div id="slider" class="swipe">
+        <div class="swipe-wrap">
+          {menuOpen ? (
+            <div
+              style={{
+                display: "flex",
+                backgroundColor: "#FAFAFA",
+                position: "absolute",
+                left: `calc(${copyAreaPosition.x}px - ${
+                  selectedWord.length / 2
+                }ch)`,
+                top: `calc(${copyAreaPosition.y}px - 3.2rem)`,
               }}
-              className="scale-[1.3] cursor-pointer"
-            />
-          </div>
-        ) : null}
+              className="scale-in-bottom w-max select-none overflow-hidden rounded-lg font-sans text-black shadow-md shadow-gray-400 transition-all"
+              ref={copyAreaRef}
+            >
+              {prevShow ? (
+                <span
+                  className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 p-4 duration-150 ease-in-out hover:bg-gray-200"
+                  onClick={() => {
+                    menu1.current.classList.remove("slide-out-left");
+                    menu2.current.classList.add("slide-out-right");
+                    setTimeout(() => {
+                      menu2.current.classList.add("hide");
+                      menu1.current.classList.remove("hide");
+                      menu1.current.classList.add("slide-in-right");
+                      setPrevShow(false);
+                    }, 100);
+                  }}
+                >
+                  <div className="color-[#374151] flex h-2 w-2 items-center justify-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 320 512"
+                    >
+                      <path
+                        fill="#374151"
+                        d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"
+                      />
+                    </svg>
+                  </div>
+                </span>
+              ) : null}
+
+              <div className="flex" ref={menu1}>
+                <span
+                  className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 px-4 py-2 duration-150 ease-in-out hover:bg-gray-200"
+                  onClick={() => {
+                    copyPasteWord(selectedWord);
+                    copyAreaRef.current.classList.add("scale-out-bottom");
+                  }}
+                >
+                  Copy
+                </span>
+
+                <span
+                  ref={findSelectionButton}
+                  className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 px-4 py-2 duration-150 ease-in-out hover:bg-gray-200"
+                  onClick={() => {
+                    emulateFind(selectedWord, findSelection, setFindSelection);
+                  }}
+                >
+                  {findSelection ? "Find Selection" : "Clear Selection"}
+                </span>
+
+                <span
+                  className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 px-4 py-2 duration-150 ease-in-out hover:bg-gray-200"
+                  onClick={() => {
+                    setDrawerOpen(true);
+
+                    copyAreaRef.current.classList.add("scale-out-bottom");
+                  }}
+                >
+                  Look Up
+                </span>
+              </div>
+
+              <div className="hide flex" ref={menu2}>
+                <span className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 px-4 py-2 duration-150 ease-in-out hover:bg-gray-200">
+                  Translate
+                </span>
+
+                <span
+                  onClick={() => {
+                    handleSearchWeb(selectedWord);
+                  }}
+                  className="cursor-pointer select-none !border-r-[0.5px] border-gray-700 px-4 py-2 duration-150 ease-in-out hover:bg-gray-200"
+                >
+                  Search Web
+                </span>
+              </div>
+              {!prevShow ? (
+                <span
+                  className="cursor-pointer select-none p-4 duration-150 ease-in-out hover:bg-gray-200"
+                  onClick={() => {
+                    menu2.current.classList.remove("slide-out-right");
+                    menu1.current.classList.add("slide-out-left");
+                    setTimeout(() => {
+                      menu1.current.classList.add("hide");
+                      menu2.current.classList.remove("hide");
+                      menu2.current.classList.add("slide-in-right");
+                      setPrevShow(true);
+                    }, 100);
+                  }}
+                >
+                  <div className="color-[#374151] flex h-2 w-2 items-center justify-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 320 512"
+                    >
+                      <path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" />
+                    </svg>
+                  </div>
+                </span>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
       </div>
-    </section>
+
+      <div
+        onClick={() => {
+          setMenuOpen(true);
+          filterSelection();
+        }}
+        style={{
+          height: "2rem",
+          width: selectedWord.length + "ch",
+          backgroundColor: "transparent",
+          position: "absolute",
+          left: `calc(${copyAreaPosition.x}px - ${selectedWord.length / 2}ch)`,
+          top: `calc(${copyAreaPosition.y}px - 1rem)`,
+        }}
+      ></div>
+
+      <CustomDrawer
+        setDrawerOpen={setDrawerOpen}
+        drawerOpen={drawerOpen}
+        selectedWord={selectedWord}
+        meaning={meaning}
+      />
+    </>
   );
-};
+}
 
 export default SideBox;
