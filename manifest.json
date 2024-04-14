@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "ReadMojo",
+  "name": "Noema",
   "version": "0.0.1",
   "content_scripts": [
     {
