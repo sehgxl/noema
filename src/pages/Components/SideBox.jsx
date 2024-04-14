@@ -65,7 +65,7 @@ function SideBox() {
   const [findSelection, setFindSelection] = useState(true);
 
   useEffect(() => {
-    const handleMouseUp = (e) => {
+    function handleMouseUp(e) {
       const selectedText = window.getSelection().toString().trim();
       const words = selectedText.split(" ");
       filterSelection();
@@ -77,7 +77,7 @@ function SideBox() {
           y: e.pageY,
         }));
       }
-    };
+    }
     document.addEventListener("mouseup", handleMouseUp);
 
     return () => {
