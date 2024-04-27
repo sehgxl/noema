@@ -19,7 +19,7 @@ The word noema in greek means mental object. Since words are mental objects, I t
 - Shows the meaning of the word along with its source in a sheet that pops from the bottom of the page.
 
 ### Find Selection
-- Highlights all the words which match the selected word. (It is regex behind the scene).
+- Highlights all the words which match the selected word.
 
 ### Copy
 - Copies the selected word to the clipboard.
