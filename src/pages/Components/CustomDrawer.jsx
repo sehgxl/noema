@@ -1,4 +1,5 @@
 import { Drawer } from "vaul";
+import LinkArrowTopRight from "./LinkArrowTopRight";
 
 const CustomDrawer = ({ setDrawerOpen, drawerOpen, selectedWord, meaning }) => {
   const allMeanings = meaning?.meanings || [];
@@ -35,27 +36,12 @@ const CustomDrawer = ({ setDrawerOpen, drawerOpen, selectedWord, meaning }) => {
                   target="_blank"
                 >
                   Sorry no meaning found, click here to google instead
-                  <svg
-                    fill="none"
-                    height="16"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                    width="16"
-                    aria-hidden="true"
-                    className="ml-1 h-3 w-3"
-                  >
-                    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
-                    <path d="M15 3h6v6"></path>
-                    <path d="M10 14L21 3"></path>
-                  </svg>
+                  <LinkArrowTopRight />
                 </a>
               ) : null}
               {allMeanings?.map((meaning, index, allMeaningsArray) => {
                 return (
-                  <div className="flex flex-col">
+                  <div key={index} className="flex flex-col">
                     <div className="flex gap-3">
                       <span className="font-bold">{selectedWord}</span>
                       <span>|</span>
@@ -76,22 +62,7 @@ const CustomDrawer = ({ setDrawerOpen, drawerOpen, selectedWord, meaning }) => {
                         target="_blank"
                       >
                         wiktionary
-                        <svg
-                          fill="none"
-                          height="16"
-                          stroke="currentColor"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          viewBox="0 0 24 24"
-                          width="16"
-                          aria-hidden="true"
-                          className="ml-1 h-3 w-3"
-                        >
-                          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
-                          <path d="M15 3h6v6"></path>
-                          <path d="M10 14L21 3"></path>
-                        </svg>
+                        <LinkArrowTopRight />
                       </a>
 
                       {index < allMeaningsArray.length - 1 ? (
