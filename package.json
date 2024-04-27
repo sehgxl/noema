@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf ./dist/* && parcel build manifest.json --config @parcel/config-webextension"
+    "build": "rm -rf ./dist && parcel build manifest.json --config @parcel/config-webextension"
   },
   "author": "",
   "license": "ISC",
