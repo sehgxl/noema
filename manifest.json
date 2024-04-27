@@ -11,6 +11,5 @@
   "action": {
     "default_popup": "src/static/popup.html"
   },
-  "host_permissions": [""],
   "permissions": ["activeTab", "identity", "storage"]
 }
