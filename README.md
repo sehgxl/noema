@@ -73,3 +73,6 @@ This is nothing between but rather your good old document object just like any o
 ## Attributes 
 For the icon used: 
 <a href="https://www.flaticon.com/free-icons/dictionary" title="dictionary icons">Dictionary icons created by PixelVerse - Flaticon</a>
+
+Article used for recording the video: 
+https://daily.stoa.com/newsletter/on-good-taste
