@@ -5,7 +5,7 @@
 # Noema 
 A chrome extension for finding the meaning of a word.
 
-Major Libraries Used:
+## Major Libraries Used:
 - [Parcel](https://parceljs.org/)
 - [React](https://react.dev/)
 - [Vaul](https://vaul.emilkowal.ski/)
