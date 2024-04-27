@@ -1,6 +1,8 @@
-![dictionary](https://github.com/sehgxl/noema/assets/83122406/3975cfe6-73bb-445e-8966-c8f65a54f93d)
-  # Noema 
 
+![dictionary (2)](https://github.com/sehgxl/noema/assets/83122406/2abce641-aab3-4fbe-9ab9-713943511176)
+
+
+# Noema 
 A chrome extension for finding the meaning of a word.
 
 Libraries Used 
