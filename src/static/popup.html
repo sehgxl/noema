@@ -1,10 +1,33 @@
-<html>
+<!doctype html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Noema</title>
-  </head>
+    <!-- <link rel="stylesheet" href="../style.css"> -->
+
   <body>
     <div id="root"></div>
-    <script type="module" src="../pages/Popup/popup.jsx"></script>
+
+    <!-- <script type="module" src="../pages/Popup/Popup.jsx"> -->
+    
+
+      <section style="width: 16rem;" className="flex w-64 flex-col justify-center items-center bg-gray-50 px-8 py-4 font-sans">
+            <h1 className="text-lg">Noema</h1>
+            <div className="mt-4"></div>
+            <button
+            id="noema-extension-toggle-btn"
+            type="button"
+              className={`bg-gray-200 hover:bg-gray-300 ease-in-out text-red-600 transition duration-150 px-4 py-2 rounded-lg`}
+            >
+              Disable Extension
+            </button>
+            <div className="mt-1"></div>
+            <p className="text-gray-400 text-center">
+              You can choose to disable the extension if you want.
+            </p>
+          </section>
+    <script type="module" src="../scripts/popup.js"></script>
   </body>
 </html>
