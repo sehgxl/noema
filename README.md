@@ -71,7 +71,7 @@ This is nothing between but rather your good old document object just like any o
 ![image](https://github.com/sehgxl/noema/assets/83122406/55447484-47c6-4530-96a2-1126a60aad8f)
 
 ## Attributes 
-For the icon used: 
+Icon used for the logo:  
 <a href="https://www.flaticon.com/free-icons/dictionary" title="dictionary icons">Dictionary icons created by PixelVerse - Flaticon</a>
 
 Article used for recording the video: 
