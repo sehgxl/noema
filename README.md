@@ -16,7 +16,7 @@ The word noema in greek means mental object. Since words are mental objects, I t
 ## What are the primary features?
 
 ### Look Up
-- Shows the meaning of the word along with its source in a sheet that pops from the bottom of the page.
+- Shows the meaning of the word along with its source in a drawer that pops from the bottom of the page.
 
 ### Find Selection
 - Highlights all the words which match the selected word.
