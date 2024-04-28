@@ -68,7 +68,7 @@ If you click on any of the extensions installed in the browser, a menu appears. 
 
 This is nothing between but rather your good old document object just like any other website has. But the the thing is this document object does not have any link with the document object which is rendered to you by the browser allowing you to see a website. So to do something in the popup and make it affect something in the website felt a bit difficult initially. You sort of have to send messages between the two document objects. Drawing these states was helpul in visualling that logic.     
 
-![image](https://github.com/sehgxl/noema/assets/83122406/55447484-47c6-4530-96a2-1126a60aad8f)
+![image](https://github.com/sehgxl/noema/assets/83122406/4f5d8626-371f-4811-bc1b-f43174733354)
 
 ## Attributes 
 Icon used for the logo:  
