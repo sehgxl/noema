@@ -76,3 +76,6 @@ Icon used for the logo:
 
 Article used for recording the video: 
 https://daily.stoa.com/newsletter/on-good-taste
+
+Test PR
+
